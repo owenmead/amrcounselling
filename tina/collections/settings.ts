@@ -1,4 +1,26 @@
-import type { Collection } from 'tinacms';
+import type { Collection, TinaField } from 'tinacms';
+import { shortText } from '../fields';
+
+/** "src/content/page/about.mdx" → "about", for list labels in the editor. */
+const pageName = (path?: string) => path?.split('/').pop()?.replace(/\.mdx$/, '');
+
+/** A menu link: pick a page from the list, or type an address for anything else. */
+const menuLinkFields: TinaField[] = [
+	{ type: 'string', name: 'label', label: 'Text', description: 'Leave blank to use the page title.' },
+	{
+		type: 'reference',
+		name: 'page',
+		label: 'Page',
+		collections: ['page'],
+		description: 'Pick a page on this site from the list.',
+	},
+	{
+		type: 'string',
+		name: 'link',
+		label: 'Or a web address',
+		description: 'Only if this isn’t a page on this site, e.g. https://… (ignored when a page is picked).',
+	},
+];
 
 export const SettingsCollection: Collection = {
 	name: 'settings',
@@ -30,20 +52,16 @@ export const SettingsCollection: Collection = {
 			name: 'nav',
 			label: 'Top menu',
 			list: true,
-			ui: { itemProps: (item: { label?: string }) => ({ label: item?.label || 'Menu item' }) },
+			ui: { itemProps: (item: { label?: string; page?: string }) => ({ label: item?.label || pageName(item?.page) || 'Menu item' }) },
 			fields: [
-				{ type: 'string', name: 'label', label: 'Text' },
-				{ type: 'string', name: 'link', label: 'Link', description: 'e.g. /about' },
+				...menuLinkFields,
 				{
 					type: 'object',
 					name: 'children',
 					label: 'Drop-down items (optional)',
 					list: true,
-					ui: { itemProps: (item: { label?: string }) => ({ label: item?.label || 'Item' }) },
-					fields: [
-						{ type: 'string', name: 'label', label: 'Text' },
-						{ type: 'string', name: 'link', label: 'Link' },
-					],
+					ui: { itemProps: (item: { label?: string; page?: string }) => ({ label: item?.label || pageName(item?.page) || 'Item' }) },
+					fields: menuLinkFields,
 				},
 			],
 		},
@@ -55,7 +73,7 @@ export const SettingsCollection: Collection = {
 				{ type: 'string', name: 'email', label: 'Email' },
 				{ type: 'string', name: 'phone', label: 'Phone' },
 				{ type: 'string', name: 'location', label: 'Location', ui: { component: 'textarea' } },
-				{ type: 'rich-text', name: 'acknowledgement', label: 'Land acknowledgement' },
+				shortText('acknowledgement', 'Land acknowledgement'),
 				{
 					type: 'string',
 					name: 'crisisNote',

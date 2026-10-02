@@ -6,25 +6,25 @@
   "nav": [
     {
       "label": "Home",
-      "link": "/"
+      "page": "src/content/page/home.mdx"
     },
     {
       "label": "About",
-      "link": "/about",
       "children": [
         {
           "label": "About me",
-          "link": "/about"
+          "page": "src/content/page/about.mdx"
         },
         {
           "label": "Contact",
-          "link": "/contact"
+          "page": "src/content/page/contact.mdx"
         }
-      ]
+      ],
+      "page": "src/content/page/about.mdx"
     },
     {
       "label": "Contact",
-      "link": "/contact"
+      "page": "src/content/page/contact.mdx"
     }
   ],
   "footer": {

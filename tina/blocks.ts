@@ -6,7 +6,10 @@
  * in Blocks.astro → sample in src/pages/dev/blocks.astro → `pnpm thumbnails`.
  */
 import type { Template } from 'tinacms';
-import { buttonsField, headingField, imageField, toneField } from './fields';
+import { buttonsField, headingField, imageField, longText, shortText, toneField } from './fields';
+
+/** Default value for a rich-text field (Tina expects its document shape, not a string). */
+const paragraph = (text: string) => ({ type: 'root', children: [{ type: 'p', children: [{ type: 'text', text }] }] });
 
 // Picker thumbnails live in public/block-previews/. Regenerate with
 // `pnpm thumbnails` (dev server running) after changing a block's look.
@@ -17,7 +20,7 @@ const hero: Template = {
 	label: 'Hero (page opener)',
 	fields: [
 		headingField,
-		{ type: 'string', name: 'text', label: 'Text', ui: { component: 'textarea' } },
+		shortText('text', 'Text'),
 		imageField('Image'),
 		{
 			type: 'string',
@@ -35,7 +38,7 @@ const hero: Template = {
 		previewSrc: preview('hero'),
 		defaultItem: {
 			heading: 'A heading that welcomes people in',
-			text: 'One or two sentences that tell visitors they are in the right place.',
+			text: paragraph('One or two sentences that tell visitors they are in the right place.'),
 			layout: 'background',
 			buttons: [{ label: 'Book a session', style: 'primary' }],
 		},
@@ -47,7 +50,7 @@ const textImage: Template = {
 	label: 'Text + Image',
 	fields: [
 		headingField,
-		{ type: 'rich-text', name: 'body', label: 'Text' },
+		longText('body', 'Text'),
 		imageField('Image'),
 		{
 			type: 'string',
@@ -86,12 +89,7 @@ const richText: Template = {
 	name: 'richText',
 	label: 'Text',
 	fields: [
-		{
-			type: 'rich-text',
-			name: 'body',
-			label: 'Text',
-			description: 'Headings, paragraphs, lists and links.',
-		},
+		longText('body', 'Text', 'Sub-headings, paragraphs, lists and links.'),
 		{
 			type: 'string',
 			name: 'align',
@@ -111,7 +109,7 @@ const cards: Template = {
 	label: 'Cards (services, approaches…)',
 	fields: [
 		headingField,
-		{ type: 'string', name: 'intro', label: 'Intro', ui: { component: 'textarea' } },
+		shortText('intro', 'Intro'),
 		{
 			type: 'string',
 			name: 'columns',
@@ -128,12 +126,12 @@ const cards: Template = {
 			list: true,
 			ui: {
 				itemProps: (item: { title?: string }) => ({ label: item?.title || 'Card' }),
-				defaultItem: { title: 'Card title', text: 'A sentence or two.' },
+				defaultItem: { title: 'Card title', text: paragraph('A sentence or two.') },
 			},
 			fields: [
 				imageField('Image (optional)'),
 				{ type: 'string', name: 'title', label: 'Title' },
-				{ type: 'string', name: 'text', label: 'Text', ui: { component: 'textarea' } },
+				shortText('text', 'Text'),
 				{ type: 'string', name: 'link', label: 'Link (optional)', description: 'e.g. /individual-counselling' },
 			],
 		},
@@ -188,7 +186,7 @@ const callToAction: Template = {
 	label: 'Call to Action',
 	fields: [
 		headingField,
-		{ type: 'string', name: 'text', label: 'Text', ui: { component: 'textarea' } },
+		shortText('text', 'Text'),
 		buttonsField,
 		toneField,
 	],
@@ -207,7 +205,7 @@ const contact: Template = {
 	label: 'Contact',
 	fields: [
 		headingField,
-		{ type: 'rich-text', name: 'body', label: 'Text' },
+		longText('body', 'Text'),
 		{
 			type: 'string',
 			name: 'formUrl',
@@ -216,21 +214,14 @@ const contact: Template = {
 				'Optional. In Google Forms: Send → the <> tab → copy the address inside src="…". Leave blank to show buttons only.',
 		},
 		buttonsField,
-		{
-			type: 'string',
-			name: 'privacyNote',
-			label: 'Privacy note',
-			description: 'Shown just above the form.',
-			ui: { component: 'textarea' },
-		},
+		shortText('privacyNote', 'Privacy note', 'Shown just above the form.'),
 		toneField,
 	],
 	ui: {
 		previewSrc: preview('contact'),
 		defaultItem: {
 			heading: 'Get in touch',
-			privacyNote:
-				'Please don’t include personal or health details here. A short note and the best way to reach you is plenty.',
+			privacyNote: paragraph('Please don’t include personal or health details here. A short note and the best way to reach you is plenty.'),
 			tone: 'plain',
 		},
 	},

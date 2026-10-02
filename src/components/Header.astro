@@ -1,13 +1,27 @@
 ---
 import { tinaField } from '@tinacms/astro/tina-field';
 import { sanitizeImageSrc } from '@tinacms/astro/sanitize';
-import { resolveLink } from '../lib/links';
+import { menuHref, resolveLink } from '../lib/links';
 import type { Settings } from '../lib/data';
 
 interface Props { settings?: Settings | null }
 
 const { settings } = Astro.props;
-const nav = (settings?.nav ?? []).filter((n) => n?.label);
+type NavEntry = { label?: string | null; page?: unknown; link?: string | null };
+// A picked page supplies the address and, if no text was typed, the label.
+const toItem = (item: NavEntry) => ({
+	label: item.label || (item.page as { title?: string } | null)?.title || '',
+	href: menuHref(item),
+	field: item,
+});
+const nav = (settings?.nav ?? []).flatMap((n) => {
+	if (!n) return [];
+	const children = (n.children ?? []).flatMap((c) => (c ? [toItem(c)] : [])).filter((c) => c.label && c.href);
+	const item = toItem(n);
+	// Keep a parent with no page of its own if it still has drop-down items.
+	if (!item.label || (!item.href && children.length === 0)) return [];
+	return [{ ...item, children }];
+});
 const logo = sanitizeImageSrc(settings?.logo);
 ---
 <header class="site-header">
@@ -22,13 +36,13 @@ const logo = sanitizeImageSrc(settings?.logo);
 		</button>
 		<nav id="site-nav" class="site-nav" aria-label="Main">
 			<ul>
-				{nav.map((item) => item && (
-					<li class:list={[item.children?.length && 'has-children']} data-tina-field={tinaField(item)}>
-						<a href={resolveLink(item.link)}>{item.label}</a>
-						{item.children && item.children.length > 0 && (
+				{nav.map((item) => (
+					<li class:list={[item.children.length > 0 && 'has-children']} data-tina-field={tinaField(item.field as Parameters<typeof tinaField>[0])}>
+						{item.href ? <a href={item.href}>{item.label}</a> : <span class="nav-label">{item.label}</span>}
+						{item.children.length > 0 && (
 							<ul class="submenu">
-								{item.children.map((child) => child && (
-									<li><a href={resolveLink(child.link)} data-tina-field={tinaField(child)}>{child.label}</a></li>
+								{item.children.map((child) => (
+									<li><a href={child.href} data-tina-field={tinaField(child.field as Parameters<typeof tinaField>[0])}>{child.label}</a></li>
 								))}
 							</ul>
 						)}

@@ -21,7 +21,45 @@ export const imageField = (label = 'Image', description?: string): TinaField => 
 			description:
 				'One short sentence for people using screen readers, e.g. "Ashley sitting in her counselling office". Also helps Google.',
 		},
+		{
+			type: 'string',
+			name: 'focus',
+			label: 'Keep in view when cropped',
+			description: 'Photos are trimmed to fit each layout. Pick the part that matters, e.g. Top for a face.',
+			options: [
+				{ label: 'Centre', value: 'center' },
+				{ label: 'Top', value: 'top' },
+				{ label: 'Bottom', value: 'bottom' },
+				{ label: 'Left', value: 'left' },
+				{ label: 'Right', value: 'right' },
+			],
+		},
 	],
+});
+
+/**
+ * Formatted text. Stored as Markdown; the toolbar decides what Ashley can do.
+ * - short: a sentence or two — bold, italic, links
+ * - long:  body copy — adds sub-headings, lists and quotes
+ * Images, tables, code and raw HTML stay off: photos go through blocks.
+ */
+export const shortText = (name: string, label: string, description?: string): TinaField => ({
+	type: 'rich-text',
+	name,
+	label,
+	description,
+	overrides: { toolbar: ['bold', 'italic', 'link'] },
+});
+
+export const longText = (name: string, label: string, description?: string): TinaField => ({
+	type: 'rich-text',
+	name,
+	label,
+	description,
+	overrides: {
+		toolbar: ['heading', 'bold', 'italic', 'link', 'ul', 'ol', 'quote'],
+		headingLevels: ['h2', 'h3'],
+	},
 });
 
 export const buttonFields: TinaField[] = [

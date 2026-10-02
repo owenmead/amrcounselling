@@ -1,4 +1,11 @@
 ---
+/**
+ * Every CMS photo goes through here.
+ * - Web-sized copies come from scripts/optimize-images.mjs; the browser picks
+ *   one via srcset. A photo with no copies yet (e.g. just uploaded, seen in
+ *   the editor preview) falls back to the original file.
+ * - `focus` (picked by the editor) sets which part survives cropping.
+ */
 import { sanitizeImageSrc } from '@tinacms/astro/sanitize';
 import type { ImageData } from '../../lib/data';
 
@@ -7,17 +14,39 @@ interface Props {
 	field?: string;
 	class?: string;
 	eager?: boolean;
+	/** How wide the photo is on screen, so the browser can pick a size. */
 	sizes?: string;
 }
 
-const { image, field, class: className, eager = false } = Astro.props;
+type Entry = { width: number; height: number; variants: { w: number; src: string }[] };
+// Glob rather than a plain import so a missing manifest (fresh clone) isn't an error.
+const manifest = (Object.values(import.meta.glob('../../generated/images.json', { eager: true, import: 'default' }))[0] ??
+	{}) as Record<string, Entry>;
+
+const FOCUS: Record<string, string> = {
+	center: '50% 50%',
+	top: '50% 15%',
+	bottom: '50% 85%',
+	left: '15% 50%',
+	right: '85% 50%',
+};
+
+const { image, field, class: className, eager = false, sizes = '100vw' } = Astro.props;
 const src = sanitizeImageSrc(image?.src);
+const entry = manifest[src];
+const largest = entry?.variants.at(-1);
+const position = FOCUS[image?.focus ?? ''];
 ---
 {src ? (
 	<img
-		src={src}
+		src={largest?.src ?? src}
+		srcset={entry?.variants.map((v) => `${v.src} ${v.w}w`).join(', ')}
+		sizes={entry ? sizes : undefined}
+		width={entry?.width}
+		height={entry?.height}
 		alt={image?.alt ?? ''}
 		class:list={['photo', className]}
+		style={position ? `object-position: ${position}` : undefined}
 		loading={eager ? 'eager' : 'lazy'}
 		fetchpriority={eager ? 'high' : undefined}
 		decoding="async"

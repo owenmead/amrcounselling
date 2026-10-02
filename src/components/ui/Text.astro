@@ -1,0 +1,22 @@
+---
+/**
+ * Short formatted text (bold, italic, links) — hero text, card text, intros.
+ * Unlike Prose it carries no reading-width or heading styles, so it takes the
+ * look of wherever it's placed (e.g. class="lede").
+ */
+import TinaMarkdown from '@tinacms/astro/TinaMarkdown.astro';
+import type { TinaRichTextContent } from '@tinacms/astro';
+
+interface Props {
+	content: unknown;
+	field?: string;
+	class?: string;
+}
+
+const { content, field, class: className } = Astro.props;
+---
+{content && (
+	<div class:list={['rt', className]} data-tina-field={field}>
+		<TinaMarkdown content={content as TinaRichTextContent} />
+	</div>
+)}

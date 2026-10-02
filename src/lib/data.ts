@@ -32,4 +32,4 @@ export type ContactBlock = Block<'PageBlocksContact'>;
 
 /** Structural shapes shared by every block (Tina generates a distinct __typename per block). */
 export type ButtonData = { label?: string | null; link?: string | null; style?: string | null };
-export type ImageData = { src?: string | null; alt?: string | null };
+export type ImageData = { src?: string | null; alt?: string | null; focus?: string | null };

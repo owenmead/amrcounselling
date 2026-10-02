@@ -1,7 +1,7 @@
 ---
 import { tinaField } from '@tinacms/astro/tina-field';
 import { sanitizeImageSrc } from '@tinacms/astro/sanitize';
-import Prose from './ui/Prose.astro';
+import Text from './ui/Text.astro';
 import { resolveLink } from '../lib/links';
 import type { Settings } from '../lib/data';
 
@@ -27,7 +27,7 @@ const tel = footer?.phone?.replace(/[^\d+]/g, '');
 			</div>
 		)}
 		{footer?.acknowledgement && (
-			<Prose content={footer.acknowledgement} field={tinaField(footer, 'acknowledgement')} class="footer-ack" />
+			<Text content={footer.acknowledgement} field={tinaField(footer, 'acknowledgement')} class="footer-ack" />
 		)}
 	</div>
 	{badges.length > 0 && (

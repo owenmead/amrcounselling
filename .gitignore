@@ -8,3 +8,5 @@ tina/__generated__
 .env.*
 !.env.example
 *.log
+public/_img/
+src/generated/

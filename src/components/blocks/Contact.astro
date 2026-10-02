@@ -3,6 +3,7 @@ import { tinaField } from '@tinacms/astro/tina-field';
 import Section from '../ui/Section.astro';
 import Buttons from '../ui/Buttons.astro';
 import Prose from '../ui/Prose.astro';
+import Text from '../ui/Text.astro';
 import type { ContactBlock } from '../../lib/data';
 
 interface Props { data: ContactBlock; booking?: string }
@@ -30,7 +31,7 @@ const formUrl = (() => {
 		</div>
 		{formUrl && (
 			<div class="contact-form">
-				{data.privacyNote && <p class="note" data-tina-field={tinaField(data, 'privacyNote')}>{data.privacyNote}</p>}
+				<Text content={data.privacyNote} field={tinaField(data, 'privacyNote')} class="note" />
 				<iframe src={formUrl} title="Contact form" loading="lazy" data-tina-field={tinaField(data, 'formUrl')}>Loading…</iframe>
 			</div>
 		)}

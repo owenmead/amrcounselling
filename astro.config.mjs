@@ -1,4 +1,5 @@
 // @ts-check
+import { fileURLToPath } from 'node:url';
 import { defineConfig, sessionDrivers } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
@@ -20,6 +21,10 @@ export default defineConfig({
 	build: { inlineStylesheets: 'always' },
 	vite: {
 		plugins: [tinaAdminDevRedirect()],
+		// Keep the shiki code highlighter out of the bundle; see src/lib/shiki-stub.js.
+		resolve: {
+			alias: [{ find: /^shiki(\/engine\/oniguruma|\/wasm)?$/, replacement: fileURLToPath(new URL('./src/lib/shiki-stub.js', import.meta.url)) }],
+		},
 		ssr: { noExternal: ['@tinacms/astro', '@tinacms/bridge'] },
 	},
 });

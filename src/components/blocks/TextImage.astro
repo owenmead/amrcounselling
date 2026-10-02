@@ -12,7 +12,7 @@ const { data, booking } = Astro.props;
 ---
 <Section tone={data.tone}>
 	<div class:list={['split', data.imageSide === 'right' && 'split-reverse']}>
-		<Photo image={data.image} field={tinaField(data, 'image')} class={`shape-${data.imageShape || 'portrait'}`} />
+		<Photo image={data.image} field={tinaField(data, 'image')} class={`shape-${data.imageShape || 'portrait'}`} sizes="(min-width: 52rem) 30rem, min(24rem, 100vw)" />
 		<div class="split-copy">
 			{data.heading && <h2 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h2>}
 			<Prose content={data.body} field={tinaField(data, 'body')} />

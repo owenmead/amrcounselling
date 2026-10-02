@@ -7,12 +7,13 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "dev": "tinacms dev -c \"astro dev\"",
-    "build": "tinacms build --content=local -c \"astro build\"",
-    "build:local": "tinacms build --local --skip-cloud-checks -c \"astro build\"",
+    "dev": "node scripts/optimize-images.mjs && tinacms dev -c \"astro dev\"",
+    "build": "node scripts/optimize-images.mjs && tinacms build --content=local -c \"astro build\"",
+    "build:local": "node scripts/optimize-images.mjs && tinacms build --local --skip-cloud-checks -c \"astro build\"",
     "preview": "astro preview",
     "astro": "astro",
-    "thumbnails": "node scripts/block-thumbnails.mjs"
+    "thumbnails": "node scripts/block-thumbnails.mjs",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.7.0",

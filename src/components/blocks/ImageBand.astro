@@ -8,5 +8,5 @@ interface Props { data: ImageBandBlock }
 const { data } = Astro.props;
 ---
 <div class:list={['image-band', `image-band-${data.height || 'short'}`]}>
-	<Photo image={data.image} field={tinaField(data, 'image')} />
+	<Photo image={data.image} field={tinaField(data, 'image')} sizes="100vw" />
 </div>
