@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@11.20.0",
   "engines": {
-    "node": ">=22.22.0"
+    "node": ">=24.13.0"
   },
   "scripts": {
     "dev": "node scripts/optimize-images.mjs && tinacms dev -c \"astro dev\"",
