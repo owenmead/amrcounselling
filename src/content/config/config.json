@@ -25,10 +25,6 @@
     {
       "label": "Contact",
       "link": "/contact"
-    },
-    {
-      "label": "Another",
-      "link": "/another-page"
     }
   ],
   "footer": {
