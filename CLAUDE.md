@@ -1,14 +1,17 @@
 # CLAUDE.md
 
 Site for **amrcounselling.ca**: Astro (static output) edited through TinaCMS,
-hosted on Cloudflare Workers. Currently a **prototype** being evaluated — all
-page copy is placeholder.
+hosted on Cloudflare Workers. Tina was chosen over Storyblok (editors felt the
+same; Tina keeps content in git). Pre-launch: testable at
+https://amrcounselling.owenmead.workers.dev/, page copy is still placeholder,
+and amrcounselling.ca still serves the old GitHub Pages placeholder. Cutover
+steps are in `LAUNCH.md`.
 
 ## Layout
 
 ```
 tina/blocks.ts                 page-builder block schemas (what the editor offers)
-tina/fields.ts                 shared fields: image, buttons, tone
+tina/fields.ts                 shared fields: image (+focus), buttons, tone, short/long text
 tina/collections/              Pages + Site Settings collections
 src/components/blocks/         one .astro component per block; Blocks.astro dispatches
 src/styles/global.css          design tokens — all colours/fonts/spacing live here
@@ -32,6 +35,20 @@ patches/                       pnpm patch for Tina CLI local upload race
 - `pnpm thumbnails` — regenerate picker thumbnails (dev server must be running)
 - `pnpm images` — regenerate web-sized photos (also runs in `dev` and `build`)
 - `pnpm astro check` — type-check
+
+## Deploying and editing flow
+
+- Every push to `main` triggers a Cloudflare Workers Build (`pnpm run build`,
+  then `npx wrangler deploy`); live in ~2–3 min. Preview builds are off — other
+  branches aren't indexed by Tina Cloud and would fail.
+- Ashley edits at `/admin` (Tina Cloud login). Each Save is one commit to
+  `main` ("TinaCMS content update" / "Update from TinaCMS" for uploads), so one
+  save = one deploy. Deliberately not batched.
+- **`git pull` before local work** — Tina commits to `main` behind your back.
+- Cloudflare build variables: `PUBLIC_TINA_CLIENT_ID`, `TINA_TOKEN` (encrypted,
+  read-only Tina token). `SITE_URL` unset → defaults to https://amrcounselling.ca.
+- Node comes from `.nvmrc` (24.13.0, matches local fnm); pnpm from
+  `packageManager` in `package.json`.
 
 ## Adding a block
 
@@ -59,6 +76,17 @@ Template in `tina/blocks.ts` → add to `blockTemplates` → component in
   route uses Astro's container API, which imports Astro's config schema, which
   imports every shiki grammar — ~2.6 MB gzipped vs ~0.9 MB without. Free plan
   limit is 3 MB. Check with `pnpm exec wrangler deploy --dry-run` after a build.
+- **Tina Cloud returns image paths as CDN URLs**
+  (`https://assets.tina.io/<client-id>/<file>`), not `/uploads/<file>`.
+  `Photo.astro` maps them back so the resized copies are used; anything that
+  renders a CMS image outside `Photo.astro` must do the same or it hot-links
+  full-size originals from Tina's CDN.
+- **Photo quality lives in `scripts/optimize-images.mjs`** (WebP q85 +
+  smartSubsample; q78 smeared foliage). Changing `WIDTHS`/`WEBP` rebuilds every
+  copy. Full-width photos need ~2400px+ sources; small sources look soft
+  however they're compressed.
+- **Regenerating `tina-lock.json`** after a schema change: run `pnpm dev` (or
+  `pnpm exec tinacms dev`) until it starts, then commit the lock file.
 - **Test builds on other ports rewrite `tina/__generated__/client.ts`** to that
   port; restart `pnpm dev` afterwards or the preview routes 404.
 - **Don't commit personal photos casually.** Git history is permanent. Originals
