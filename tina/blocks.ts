@@ -21,7 +21,7 @@ const hero: Template = {
 	fields: [
 		headingField,
 		shortText('text', 'Text'),
-		imageField('Image'),
+		imageField('Image', 'Fills the width of the screen, so use a large photo: at least 2400 pixels wide, ideally the original from the camera or phone.'),
 		{
 			type: 'string',
 			name: 'layout',
@@ -144,7 +144,7 @@ const imageBand: Template = {
 	name: 'imageBand',
 	label: 'Full-width Photo',
 	fields: [
-		imageField('Photo'),
+		imageField('Photo', 'Fills the width of the screen, so use a large photo: at least 2400 pixels wide, ideally the original from the camera or phone.'),
 		{
 			type: 'string',
 			name: 'height',

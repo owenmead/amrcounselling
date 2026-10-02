@@ -9,7 +9,7 @@
  * gitignored and rebuilt by `pnpm dev` / `pnpm build`; unchanged images are
  * skipped, so reruns are quick.
  */
-import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 
@@ -18,6 +18,11 @@ const OUT = 'public/_img';
 const MANIFEST = 'src/generated/images.json';
 const WIDTHS = [480, 800, 1200, 1600, 2400];
 const RASTER = /\.(jpe?g|png|webp|avif|tiff?)$/i;
+// q78 visibly smeared foliage; q85 + smartSubsample (sharper colour edges) is
+// close to the original at ~20% more bytes. Changing this rebuilds all copies.
+const WEBP = { quality: 85, smartSubsample: true };
+const SETTINGS = JSON.stringify({ WIDTHS, WEBP });
+const STAMP = path.join(OUT, '.settings.json');
 
 async function* walk(dir) {
 	for (const entry of await readdir(dir, { withFileTypes: true }).catch(() => [])) {
@@ -28,6 +33,11 @@ async function* walk(dir) {
 }
 
 const isFresh = async (out, srcMtime) => (await stat(out).catch(() => null))?.mtimeMs >= srcMtime;
+
+// Encoder settings changed since the last run → throw away all copies.
+if ((await readFile(STAMP, 'utf8').catch(() => '')) !== SETTINGS) {
+	await rm(OUT, { recursive: true, force: true });
+}
 
 const manifest = {};
 let made = 0;
@@ -45,7 +55,7 @@ for await (const file of walk(SRC)) {
 		const out = path.join(OUT, `${base}-${w}.webp`);
 		if (!(await isFresh(out, srcMtime))) {
 			await mkdir(path.dirname(out), { recursive: true });
-			await sharp(file).rotate().resize({ width: w }).webp({ quality: 78 }).toFile(out);
+			await sharp(file).rotate().resize({ width: w }).webp(WEBP).toFile(out);
 			made++;
 		}
 		variants.push({ w, src: `/_img/${base}-${w}.webp` });
@@ -53,6 +63,8 @@ for await (const file of walk(SRC)) {
 	manifest[`/uploads/${rel.split(path.sep).join('/')}`] = { width, height, variants };
 }
 
+await mkdir(OUT, { recursive: true });
+await writeFile(STAMP, SETTINGS);
 await mkdir(path.dirname(MANIFEST), { recursive: true });
 await writeFile(MANIFEST, JSON.stringify(manifest, null, '\t') + '\n');
 console.log(`images: ${Object.keys(manifest).length} source(s), ${made} new variant(s)`);
