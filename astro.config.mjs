@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, sessionDrivers } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
@@ -12,7 +12,10 @@ import { tinaAdminDevRedirect } from '@tinacms/astro/vite';
 export default defineConfig({
 	site: process.env.SITE_URL || 'https://amrcounselling.ca',
 	output: 'static',
-	adapter: cloudflare(),
+	// Images are processed at build time (no Cloudflare Images binding), and
+	// sessions are unused, so don't provision a KV namespace for them.
+	adapter: cloudflare({ imageService: 'compile' }),
+	session: { driver: sessionDrivers.lruCache() },
 	integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/admin') }), tina()],
 	build: { inlineStylesheets: 'always' },
 	vite: {
