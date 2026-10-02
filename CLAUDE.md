@@ -65,7 +65,12 @@ Template in `tina/blocks.ts` → add to `blockTemplates` → component in
   are kept as uploaded; the site serves resized copies, so size isn't the issue.
 - **`CNAME` is for GitHub Pages**, which still serves the old placeholder (its
   deploy workflow was removed so it stops updating). Leave it until DNS moves
-  to Cloudflare.
+  to Cloudflare. If Pages ever needs restoring, re-enable it
+  (`gh api -X POST repos/owenmead/amrcounselling/pages -f build_type=workflow`),
+  set `cname`, and rerun the old placeholder deploy: `gh run rerun 34378058642`.
+- **Keep the repo public until cutover.** Making it private deletes the GitHub
+  Pages site and amrcounselling.ca 404s. Going private is a post-launch step in
+  `LAUNCH.md`.
 
 ## DNS / email
 
