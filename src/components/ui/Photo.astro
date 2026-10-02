@@ -33,7 +33,11 @@ const FOCUS: Record<string, string> = {
 
 const { image, field, class: className, eager = false, sizes = '100vw' } = Astro.props;
 const src = sanitizeImageSrc(image?.src);
-const entry = manifest[src];
+// With Tina Cloud, image paths come back as its CDN URL
+// (https://assets.tina.io/<client-id>/beach.png); the same file is
+// public/uploads/beach.png in the repo, which is what the manifest is keyed by.
+const local = src.replace(/^https:\/\/assets\.tina\.io\/[^/]+\//, '/uploads/');
+const entry = manifest[local];
 const largest = entry?.variants.at(-1);
 const position = FOCUS[image?.focus ?? ''];
 ---
