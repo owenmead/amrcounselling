@@ -1,0 +1,19 @@
+---
+/**
+ * Editor preview. Rendered on demand (by the Worker in production) so pages
+ * the editor has just created, or has hidden, can be previewed before the
+ * next static build. The public site never links here and it is noindexed.
+ */
+import PageView from '../../components/PageView.astro';
+import client from '../../../tina/__generated__/client';
+
+export const prerender = false;
+
+const slug = Astro.params.slug || 'home';
+const exists = await client.queries
+	.page({ relativePath: `${slug}.mdx` })
+	.then((r) => !!r.data?.page)
+	.catch(() => false);
+if (!exists) return new Response('Not found', { status: 404 });
+---
+<PageView slug={slug} preview />

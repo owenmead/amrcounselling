@@ -1,0 +1,21 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Section from '../ui/Section.astro';
+import type { QuotesBlock } from '../../lib/data';
+
+interface Props { data: QuotesBlock }
+
+const { data } = Astro.props;
+const items = (data.items ?? []).filter((i) => i?.quote);
+---
+<Section tone={data.tone}>
+	{data.heading && <header class="section-header"><h2 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h2></header>}
+	<div class:list={['quotes', items.length === 1 && 'quotes-single']}>
+		{items.map((item) => item && (
+			<figure class="quote" data-tina-field={tinaField(item)}>
+				<blockquote data-tina-field={tinaField(item, 'quote')}>{item.quote}</blockquote>
+				{item.attribution && <figcaption data-tina-field={tinaField(item, 'attribution')}>{item.attribution}</figcaption>}
+			</figure>
+		))}
+	</div>
+</Section>

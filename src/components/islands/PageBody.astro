@@ -1,0 +1,12 @@
+---
+import Blocks from '../blocks/Blocks.astro';
+import type { Page, Settings } from '../../lib/data';
+
+interface Props {
+	data?: Page | null;
+	settings?: Settings | null;
+}
+
+const { data, settings } = Astro.props;
+---
+{data && <Blocks data={data} settings={settings} />}

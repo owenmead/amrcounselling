@@ -1,0 +1,42 @@
+{
+  "siteName": "AMR Counselling",
+  "tagline": "Placeholder tagline — Ashley's words go here",
+  "bookingUrl": "https://example.janeapp.com",
+  "bookingLabel": "Book a session",
+  "nav": [
+    {
+      "label": "Home",
+      "link": "/"
+    },
+    {
+      "label": "About",
+      "link": "/about",
+      "children": [
+        {
+          "label": "About me",
+          "link": "/about"
+        },
+        {
+          "label": "Contact",
+          "link": "/contact"
+        }
+      ]
+    },
+    {
+      "label": "Contact",
+      "link": "/contact"
+    },
+    {
+      "label": "Another",
+      "link": "/another-page"
+    }
+  ],
+  "footer": {
+    "email": "hello@amrcounselling.ca",
+    "phone": "",
+    "location": "Placeholder location",
+    "acknowledgement": "Placeholder land acknowledgement — Ashley's words go here.\n",
+    "crisisNote": "If you are in crisis, call or text 9-8-8, or call 9-1-1.",
+    "badges": []
+  }
+}

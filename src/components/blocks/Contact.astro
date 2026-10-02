@@ -1,0 +1,38 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Section from '../ui/Section.astro';
+import Buttons from '../ui/Buttons.astro';
+import Prose from '../ui/Prose.astro';
+import type { ContactBlock } from '../../lib/data';
+
+interface Props { data: ContactBlock; booking?: string }
+
+const { data, booking } = Astro.props;
+// Only embed real Google Forms; anything else is ignored rather than iframed.
+const formUrl = (() => {
+	try {
+		const url = new URL(data.formUrl ?? '');
+		const ok = url.protocol === 'https:' && (url.hostname === 'docs.google.com' || url.hostname === 'forms.gle');
+		if (!ok) return null;
+		if (url.hostname === 'docs.google.com' && !url.searchParams.has('embedded')) url.searchParams.set('embedded', 'true');
+		return url.toString();
+	} catch {
+		return null;
+	}
+})();
+---
+<Section tone={data.tone}>
+	<div class:list={['contact', formUrl && 'contact-with-form']}>
+		<div class="contact-copy">
+			{data.heading && <h2 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h2>}
+			<Prose content={data.body} field={tinaField(data, 'body')} />
+			<Buttons buttons={data.buttons} booking={booking} />
+		</div>
+		{formUrl && (
+			<div class="contact-form">
+				{data.privacyNote && <p class="note" data-tina-field={tinaField(data, 'privacyNote')}>{data.privacyNote}</p>}
+				<iframe src={formUrl} title="Contact form" loading="lazy" data-tina-field={tinaField(data, 'formUrl')}>Loading…</iframe>
+			</div>
+		)}
+	</div>
+</Section>

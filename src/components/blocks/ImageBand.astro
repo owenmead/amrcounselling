@@ -1,0 +1,12 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Photo from '../ui/Photo.astro';
+import type { ImageBandBlock } from '../../lib/data';
+
+interface Props { data: ImageBandBlock }
+
+const { data } = Astro.props;
+---
+<div class:list={['image-band', `image-band-${data.height || 'short'}`]}>
+	<Photo image={data.image} field={tinaField(data, 'image')} />
+</div>

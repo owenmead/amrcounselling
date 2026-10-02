@@ -1,0 +1,46 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import { sanitizeImageSrc } from '@tinacms/astro/sanitize';
+import Prose from './ui/Prose.astro';
+import { resolveLink } from '../lib/links';
+import type { Settings } from '../lib/data';
+
+interface Props { settings?: Settings | null }
+
+const { settings } = Astro.props;
+const footer = settings?.footer;
+const badges = (footer?.badges ?? []).filter((b) => b?.src);
+const year = new Date().getFullYear();
+const tel = footer?.phone?.replace(/[^\d+]/g, '');
+---
+<footer class="site-footer">
+	<div class="container footer-grid">
+		<div>
+			<p class="footer-name" data-tina-field={settings ? tinaField(settings, 'siteName') : undefined}>{settings?.siteName}</p>
+			{settings?.tagline && <p data-tina-field={tinaField(settings, 'tagline')}>{settings.tagline}</p>}
+		</div>
+		{footer && (
+			<div class="footer-contact">
+				{footer.email && <p><a href={`mailto:${footer.email}`} data-tina-field={tinaField(footer, 'email')}>{footer.email}</a></p>}
+				{footer.phone && <p><a href={`tel:${tel}`} data-tina-field={tinaField(footer, 'phone')}>{footer.phone}</a></p>}
+				{footer.location && <p class="pre" data-tina-field={tinaField(footer, 'location')}>{footer.location}</p>}
+			</div>
+		)}
+		{footer?.acknowledgement && (
+			<Prose content={footer.acknowledgement} field={tinaField(footer, 'acknowledgement')} class="footer-ack" />
+		)}
+	</div>
+	{badges.length > 0 && (
+		<div class="container badges">
+			{badges.map((b) => b && (
+				b.link
+					? <a href={resolveLink(b.link)} target="_blank" rel="noopener" data-tina-field={tinaField(b)}><img src={sanitizeImageSrc(b.src)} alt={b.alt ?? ''} loading="lazy" /></a>
+					: <img src={sanitizeImageSrc(b.src)} alt={b.alt ?? ''} loading="lazy" data-tina-field={tinaField(b)} />
+			))}
+		</div>
+	)}
+	<div class="container footer-base">
+		<p>&copy; {year} {settings?.siteName}</p>
+		{footer?.crisisNote && <p data-tina-field={tinaField(footer, 'crisisNote')}>{footer.crisisNote}</p>}
+	</div>
+</footer>

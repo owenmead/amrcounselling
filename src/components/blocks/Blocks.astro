@@ -1,0 +1,37 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Hero from './Hero.astro';
+import TextImage from './TextImage.astro';
+import RichText from './RichText.astro';
+import Cards from './Cards.astro';
+import ImageBand from './ImageBand.astro';
+import Quotes from './Quotes.astro';
+import CallToAction from './CallToAction.astro';
+import Contact from './Contact.astro';
+import type { Page, Settings } from '../../lib/data';
+
+interface Props {
+	data: Page;
+	settings?: Settings | null;
+}
+
+const { data, settings } = Astro.props;
+const blocks = (data.blocks ?? []).filter((b) => b !== null);
+const booking = settings?.bookingUrl ?? undefined;
+---
+{blocks.map((block) => (
+	<div data-tina-field={tinaField(block)}>
+		{(() => {
+			switch (block.__typename) {
+				case 'PageBlocksHero': return <Hero data={block} booking={booking} />;
+				case 'PageBlocksTextImage': return <TextImage data={block} booking={booking} />;
+				case 'PageBlocksRichText': return <RichText data={block} />;
+				case 'PageBlocksCards': return <Cards data={block} />;
+				case 'PageBlocksImageBand': return <ImageBand data={block} />;
+				case 'PageBlocksQuotes': return <Quotes data={block} />;
+				case 'PageBlocksCallToAction': return <CallToAction data={block} booking={booking} />;
+				case 'PageBlocksContact': return <Contact data={block} booking={booking} />;
+			}
+		})()}
+	</div>
+))}

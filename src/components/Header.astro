@@ -1,0 +1,61 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import { sanitizeImageSrc } from '@tinacms/astro/sanitize';
+import { resolveLink } from '../lib/links';
+import type { Settings } from '../lib/data';
+
+interface Props { settings?: Settings | null }
+
+const { settings } = Astro.props;
+const nav = (settings?.nav ?? []).filter((n) => n?.label);
+const logo = sanitizeImageSrc(settings?.logo);
+---
+<header class="site-header">
+	<div class="container header-inner">
+		<a href="/" class="brand">
+			{logo && <img src={logo} alt="" class="brand-logo" data-tina-field={settings ? tinaField(settings, 'logo') : undefined} />}
+			<span data-tina-field={settings ? tinaField(settings, 'siteName') : undefined}>{settings?.siteName}</span>
+		</a>
+		<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+			<span class="sr-only">Menu</span>
+			<span class="menu-bars" aria-hidden="true"></span>
+		</button>
+		<nav id="site-nav" class="site-nav" aria-label="Main">
+			<ul>
+				{nav.map((item) => item && (
+					<li class:list={[item.children?.length && 'has-children']} data-tina-field={tinaField(item)}>
+						<a href={resolveLink(item.link)}>{item.label}</a>
+						{item.children && item.children.length > 0 && (
+							<ul class="submenu">
+								{item.children.map((child) => child && (
+									<li><a href={resolveLink(child.link)} data-tina-field={tinaField(child)}>{child.label}</a></li>
+								))}
+							</ul>
+						)}
+					</li>
+				))}
+			</ul>
+			{settings?.bookingUrl && (
+				<a
+					class="button button-primary button-small"
+					href={resolveLink(settings.bookingUrl)}
+					target="_blank"
+					rel="noopener"
+					data-tina-field={tinaField(settings, 'bookingLabel')}
+				>{settings.bookingLabel || 'Book a session'}</a>
+			)}
+		</nav>
+	</div>
+</header>
+<script is:inline>
+	if (!window.__menuBound) {
+		window.__menuBound = true;
+		document.addEventListener('click', (e) => {
+			const btn = e.target.closest('.menu-toggle');
+			if (!btn) return;
+			const open = btn.getAttribute('aria-expanded') !== 'true';
+			btn.setAttribute('aria-expanded', String(open));
+			document.documentElement.classList.toggle('menu-open', open);
+		});
+	}
+</script>

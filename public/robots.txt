@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /preview/
+Disallow: /tina-island/
+
+Sitemap: https://amrcounselling.ca/sitemap-index.xml

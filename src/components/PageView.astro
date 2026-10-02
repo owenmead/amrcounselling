@@ -1,0 +1,25 @@
+---
+/**
+ * Renders one CMS page by slug. Shared by the static routes (the public
+ * site) and the on-demand /preview route (the editor).
+ */
+import Base from '../layouts/Base.astro';
+import TinaIsland from '@tinacms/astro/TinaIsland.astro';
+import PageBody from './islands/PageBody.astro';
+import { getPage, getSettings } from '../lib/data';
+import { islands } from '../lib/islands';
+
+interface Props {
+	slug: string;
+	preview?: boolean;
+}
+
+const { slug, preview = false } = Astro.props;
+const data = (await getPage(slug)).data?.page;
+const settings = (await getSettings()).data?.settings ?? null;
+---
+<Base title={data?.title} description={data?.description} noindex={preview || !!data?.hidden}>
+	<TinaIsland name="page" wrapper={islands.page.wrapper} params={{ slug }} primary>
+		<PageBody data={data} settings={settings} />
+	</TinaIsland>
+</Base>

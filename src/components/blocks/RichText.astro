@@ -1,0 +1,13 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Section from '../ui/Section.astro';
+import Prose from '../ui/Prose.astro';
+import type { RichTextBlock } from '../../lib/data';
+
+interface Props { data: RichTextBlock }
+
+const { data } = Astro.props;
+---
+<Section tone={data.tone} width="narrow">
+	<Prose content={data.body} field={tinaField(data, 'body')} class={data.align === 'center' ? 'text-center' : undefined} />
+</Section>

@@ -1,0 +1,17 @@
+---
+import TinaMarkdown from '@tinacms/astro/TinaMarkdown.astro';
+import type { TinaRichTextContent } from '@tinacms/astro';
+
+interface Props {
+	content: unknown;
+	field?: string;
+	class?: string;
+}
+
+const { content, field, class: className } = Astro.props;
+---
+{content && (
+	<div class:list={['prose', className]} data-tina-field={field}>
+		<TinaMarkdown content={content as TinaRichTextContent} />
+	</div>
+)}

@@ -1,0 +1,35 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Section from '../ui/Section.astro';
+import Photo from '../ui/Photo.astro';
+import { resolveLink } from '../../lib/links';
+import type { CardsBlock } from '../../lib/data';
+
+interface Props { data: CardsBlock }
+
+const { data } = Astro.props;
+const items = (data.items ?? []).filter((i) => i !== null);
+---
+<Section tone={data.tone}>
+	{(data.heading || data.intro) && (
+		<header class="section-header">
+			{data.heading && <h2 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h2>}
+			{data.intro && <p class="lede" data-tina-field={tinaField(data, 'intro')}>{data.intro}</p>}
+		</header>
+	)}
+	<div class:list={['cards', `cards-${data.columns || '3'}`]}>
+		{items.map((item) => {
+			const Tag = item.link ? 'a' : 'div';
+			return (
+				<Tag class="card" href={item.link ? resolveLink(item.link) : undefined} data-tina-field={tinaField(item)}>
+					{item.image?.src && <Photo image={item.image} field={tinaField(item, 'image')} class="shape-landscape" />}
+					<div class="card-body">
+						{item.title && <h3 data-tina-field={tinaField(item, 'title')}>{item.title}</h3>}
+						{item.text && <p data-tina-field={tinaField(item, 'text')}>{item.text}</p>}
+						{item.link && <span class="card-more" aria-hidden="true">Learn more →</span>}
+					</div>
+				</Tag>
+			);
+		})}
+	</div>
+</Section>

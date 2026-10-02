@@ -1,0 +1,8 @@
+{
+	// Cloudflare Workers config. Static pages are served as assets; the Worker
+	// only handles /tina-island/* (live preview while editing).
+	// nodejs_compat provides node:async_hooks, which the island route needs.
+	"name": "amrcounselling",
+	"compatibility_date": "2026-06-01",
+	"compatibility_flags": ["nodejs_compat"]
+}

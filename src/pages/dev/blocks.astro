@@ -1,0 +1,56 @@
+---
+/**
+ * Dev-only gallery: one sample of each block, screenshotted by
+ * scripts/block-thumbnails.mjs to make the editor's block-picker images.
+ * Returns 404 in production.
+ */
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/source-sans-3';
+import '../../styles/global.css';
+import Hero from '../../components/blocks/Hero.astro';
+import TextImage from '../../components/blocks/TextImage.astro';
+import RichText from '../../components/blocks/RichText.astro';
+import Cards from '../../components/blocks/Cards.astro';
+import ImageBand from '../../components/blocks/ImageBand.astro';
+import Quotes from '../../components/blocks/Quotes.astro';
+import CallToAction from '../../components/blocks/CallToAction.astro';
+import Contact from '../../components/blocks/Contact.astro';
+
+export const prerender = false;
+if (import.meta.env.PROD) return new Response('Not found', { status: 404 });
+
+const p = (text: string) => ({ type: 'p', children: [{ type: 'text', text }] });
+const h = (level: number, text: string) => ({ type: `h${level}`, children: [{ type: 'text', text }] });
+const rich = (...children: object[]) => ({ type: 'root', children });
+const li = (text: string) => ({ type: 'li', children: [{ type: 'lic', children: [{ type: 'text', text }] }] });
+const landscape = { src: '/uploads/placeholder-landscape.jpg', alt: '' };
+const portrait = { src: '/uploads/placeholder-portrait.jpg', alt: '' };
+const water = { src: '/uploads/placeholder-water.jpg', alt: '' };
+const body = 'A few sentences of text sit here, in a comfortable reading width.';
+const button = (label: string, style = 'primary') => ({ label, style, link: '#' });
+
+// `as any`: sample data doesn't carry Tina's generated __typename/metadata.
+const samples: [string, any, any][] = [
+	['hero', Hero, { heading: 'A heading that welcomes people in', text: 'One or two sentences that tell visitors they are in the right place.', layout: 'background', image: landscape, buttons: [button('Book a session'), button('About me', 'secondary')] }],
+	['textImage', TextImage, { heading: 'A heading for this section', body: rich(p(body), p('A second paragraph can follow.')), image: portrait, imageSide: 'left', imageShape: 'portrait', buttons: [button('Learn more', 'secondary')], tone: 'plain' }],
+	['richText', RichText, { body: rich(h(2, 'A section heading'), p(body + ' Paragraphs, lists and links.'), { type: 'ul', children: [li('A list item'), li('Another list item')] }), align: 'left', tone: 'plain' }],
+	['cards', Cards, { heading: 'How I can help', intro: 'A sentence introducing the cards.', columns: '3', items: [1, 2, 3].map(() => ({ title: 'Card title', text: 'A sentence or two about this item.', link: '#', image: water })), tone: 'soft' }],
+	['imageBand', ImageBand, { image: water, height: 'short' }],
+	['quotes', Quotes, { heading: 'Kind words', items: [{ quote: 'A short quote goes here, set in a gentle italic.', attribution: 'Name, role' }, { quote: 'A second quote can sit beside the first.', attribution: 'Name, role' }], tone: 'soft' }],
+	['callToAction', CallToAction, { heading: 'Ready to take the first step?', text: 'A gentle invitation to get in touch.', buttons: [button('Book a session')], tone: 'accent' }],
+	['contact', Contact, { heading: 'Get in touch', body: rich(p('How and when to reach out.')), buttons: [button('Book a session'), button('Email me', 'secondary')], tone: 'plain' }],
+];
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="robots" content="noindex" />
+		<title>Block samples</title>
+	</head>
+	<body>
+		{samples.map(([name, Block, data]) => (
+			<div data-block={name}><Block data={{ __typename: name, ...data }} booking="#" /></div>
+		))}
+	</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "name": "amrcounselling",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "tinacms dev -c \"astro dev\"",
+    "build": "tinacms build --content=local -c \"astro build\"",
+    "build:local": "tinacms build --local --skip-cloud-checks -c \"astro build\"",
+    "preview": "astro preview",
+    "astro": "astro",
+    "thumbnails": "node scripts/block-thumbnails.mjs"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.7.0",
+    "@astrojs/mdx": "^6.0.2",
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/fraunces": "^5.2.8",
+    "@fontsource-variable/source-sans-3": "^5.2.8",
+    "@tinacms/astro": "^0.7.0",
+    "astro": "^6.4.4",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@tinacms/cli": "^3.0.0",
+    "@types/node": "^25.9.1",
+    "puppeteer-core": "^25.12.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tinacms": "^3.14.0",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.2"
+  }
+}

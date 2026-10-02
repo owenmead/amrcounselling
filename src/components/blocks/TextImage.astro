@@ -1,0 +1,22 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Section from '../ui/Section.astro';
+import Buttons from '../ui/Buttons.astro';
+import Photo from '../ui/Photo.astro';
+import Prose from '../ui/Prose.astro';
+import type { TextImageBlock } from '../../lib/data';
+
+interface Props { data: TextImageBlock; booking?: string }
+
+const { data, booking } = Astro.props;
+---
+<Section tone={data.tone}>
+	<div class:list={['split', data.imageSide === 'right' && 'split-reverse']}>
+		<Photo image={data.image} field={tinaField(data, 'image')} class={`shape-${data.imageShape || 'portrait'}`} />
+		<div class="split-copy">
+			{data.heading && <h2 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h2>}
+			<Prose content={data.body} field={tinaField(data, 'body')} />
+			<Buttons buttons={data.buttons} booking={booking} />
+		</div>
+	</div>
+</Section>

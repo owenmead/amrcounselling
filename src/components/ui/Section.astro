@@ -1,0 +1,14 @@
+---
+interface Props {
+	tone?: string | null;
+	width?: 'narrow' | 'wide';
+	class?: string;
+}
+
+const { tone, width = 'wide', class: className } = Astro.props;
+---
+<section class:list={['section', `tone-${tone || 'plain'}`, className]}>
+	<div class:list={['container', width === 'narrow' && 'container-narrow']}>
+		<slot />
+	</div>
+</section>

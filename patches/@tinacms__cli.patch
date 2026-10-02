@@ -1,0 +1,46 @@
+diff --git a/dist/index.js b/dist/index.js
+index 3c593402172731315672532b8cf7490c40a171a8..0ae74c46b8f636ae7ca7a35b1baa148b6993c5d6 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -2569,6 +2569,7 @@ var createMediaRouter = (config2) => {
+   const handlePost = async function(req, res) {
+     const bb = busboy({ headers: req.headers });
+     let responded = false;
++    const writes = [];
+     bb.on("file", async (_name, file, _info) => {
+       const fullPath = decodeURIComponent(
+         req.url?.slice("/media/upload/".length)
+@@ -2587,8 +2588,13 @@ var createMediaRouter = (config2) => {
+         );
+         return;
+       }
++      let done;
++      writes.push(new Promise((resolve, reject) => done = { resolve, reject }));
+       await fs8.ensureDir(path10.dirname(saveTo));
+-      file.pipe(fs8.createWriteStream(saveTo));
++      const out = fs8.createWriteStream(saveTo);
++      out.on("finish", done.resolve);
++      out.on("error", done.reject);
++      file.pipe(out);
+     });
+     bb.on("error", (error) => {
+       responded = true;
+@@ -2599,8 +2605,17 @@ var createMediaRouter = (config2) => {
+         res.end(JSON.stringify({ message: "Unknown error while uploading" }));
+       }
+     });
+-    bb.on("close", () => {
++    bb.on("close", async () => {
+       if (responded) return;
++      // Wait for files to be fully flushed to disk before reporting success,
++      // otherwise the media manager requests a half-written file.
++      try {
++        await Promise.all(writes);
++      } catch (error) {
++        res.statusCode = 500;
++        res.end(JSON.stringify({ message: String(error) }));
++        return;
++      }
+       res.statusCode = 200;
+       res.end(JSON.stringify({ success: true }));
+     });

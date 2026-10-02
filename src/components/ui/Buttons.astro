@@ -1,0 +1,31 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import { isExternal, resolveLink } from '../../lib/links';
+import type { ButtonData } from '../../lib/data';
+
+interface Props {
+	buttons?: (ButtonData | null)[] | null;
+	/** Fallback for buttons with no link — the Jane booking URL. */
+	booking?: string;
+	align?: 'start' | 'center';
+	inverse?: boolean;
+}
+
+const { buttons, booking, align = 'start', inverse = false } = Astro.props;
+const items = (buttons ?? []).filter((b): b is ButtonData => !!b?.label);
+---
+{items.length > 0 && (
+	<div class:list={['buttons', `buttons-${align}`]}>
+		{items.map((b) => {
+			const href = resolveLink(b.link, booking);
+			return (
+				<a
+					href={href}
+					class:list={['button', b.style === 'secondary' ? 'button-secondary' : 'button-primary', inverse && 'button-inverse']}
+					data-tina-field={tinaField(b)}
+					{...(isExternal(href) ? { target: '_blank', rel: 'noopener' } : {})}
+				>{b.label}</a>
+			);
+		})}
+	</div>
+)}

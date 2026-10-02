@@ -1,0 +1,14 @@
+---
+import PageView from '../components/PageView.astro';
+import { listPages } from '../lib/data';
+
+export async function getStaticPaths() {
+	const pages = await listPages();
+	return pages
+		.filter((p) => !p.hidden && p._sys.filename !== 'home')
+		.map((p) => ({ params: { slug: p._sys.breadcrumbs.join('/') } }));
+}
+
+const slug = Astro.params.slug as string;
+---
+<PageView slug={slug} />

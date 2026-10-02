@@ -1,0 +1,50 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/source-sans-3';
+import '../styles/global.css';
+import TinaIsland from '@tinacms/astro/TinaIsland.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getSettings } from '../lib/data';
+import { islands } from '../lib/islands';
+
+interface Props {
+	title?: string | null;
+	description?: string | null;
+	noindex?: boolean;
+}
+
+const settings = (await getSettings()).data?.settings ?? null;
+const { title, description, noindex = false } = Astro.props;
+const siteName = settings?.siteName ?? '';
+const fullTitle = !title || title === siteName ? siteName : `${title} | ${siteName}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en-CA">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>{fullTitle}</title>
+		{description && <meta name="description" content={description} />}
+		{noindex && <meta name="robots" content="noindex" />}
+		<link rel="canonical" href={canonical} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={fullTitle} />
+		{description && <meta property="og:description" content={description} />}
+		<meta property="og:url" content={canonical} />
+	</head>
+	<body>
+		<a class="skip-link" href="#content">Skip to content</a>
+		<TinaIsland name="header" wrapper={islands.header.wrapper}>
+			<Header settings={settings} />
+		</TinaIsland>
+		<div id="content">
+			<slot />
+		</div>
+		<TinaIsland name="footer" wrapper={islands.footer.wrapper}>
+			<Footer settings={settings} />
+		</TinaIsland>
+	</body>
+</html>

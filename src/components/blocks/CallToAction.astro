@@ -1,0 +1,15 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Section from '../ui/Section.astro';
+import Buttons from '../ui/Buttons.astro';
+import type { CallToActionBlock } from '../../lib/data';
+
+interface Props { data: CallToActionBlock; booking?: string }
+
+const { data, booking } = Astro.props;
+---
+<Section tone={data.tone} width="narrow" class="cta">
+	{data.heading && <h2 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h2>}
+	{data.text && <p class="lede" data-tina-field={tinaField(data, 'text')}>{data.text}</p>}
+	<Buttons buttons={data.buttons} booking={booking} align="center" inverse={data.tone === 'accent'} />
+</Section>

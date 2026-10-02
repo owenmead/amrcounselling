@@ -1,0 +1,42 @@
+---
+import { tinaField } from '@tinacms/astro/tina-field';
+import Buttons from '../ui/Buttons.astro';
+import Photo from '../ui/Photo.astro';
+import type { HeroBlock } from '../../lib/data';
+
+interface Props { data: HeroBlock; booking?: string }
+
+const { data, booking } = Astro.props;
+const layout = data.layout || 'background';
+const hasImage = !!data.image?.src;
+---
+{layout === 'background' ? (
+	<section class:list={['hero', 'hero-background', !hasImage && 'hero-noimage']}>
+		{hasImage && <Photo image={data.image} field={tinaField(data, 'image')} class="hero-bg" eager />}
+		<div class="hero-scrim"></div>
+		<div class="container hero-inner">
+			{data.heading && <h1 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h1>}
+			{data.text && <p class="lede" data-tina-field={tinaField(data, 'text')}>{data.text}</p>}
+			<Buttons buttons={data.buttons} booking={booking} align="center" inverse />
+		</div>
+	</section>
+) : layout === 'portrait' ? (
+	<section class="hero hero-portrait tone-soft">
+		<div class="container hero-split">
+			<div class="hero-copy">
+				{data.heading && <h1 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h1>}
+				{data.text && <p class="lede" data-tina-field={tinaField(data, 'text')}>{data.text}</p>}
+				<Buttons buttons={data.buttons} booking={booking} />
+			</div>
+			<Photo image={data.image} field={tinaField(data, 'image')} class="shape-portrait hero-photo" eager />
+		</div>
+	</section>
+) : (
+	<section class="hero hero-text tone-soft">
+		<div class="container container-narrow hero-inner">
+			{data.heading && <h1 data-tina-field={tinaField(data, 'heading')}>{data.heading}</h1>}
+			{data.text && <p class="lede" data-tina-field={tinaField(data, 'text')}>{data.text}</p>}
+			<Buttons buttons={data.buttons} booking={booking} align="center" />
+		</div>
+	</section>
+)}
