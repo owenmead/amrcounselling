@@ -2,6 +2,7 @@
   "name": "amrcounselling",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@11.20.0",
   "engines": {
     "node": ">=22.22.0"
   },
