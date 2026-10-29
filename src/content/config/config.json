@@ -1,7 +1,7 @@
 {
   "siteName": "AMR Counselling",
-  "tagline": "Placeholder tagline — Ashley's words go here",
-  "bookingUrl": "https://example.janeapp.com",
+  "tagline": "A little more ease",
+  "bookingUrl": "https://torchlightcounselling.janeapp.com/",
   "bookingLabel": "Book a session",
   "nav": [
     {
@@ -10,6 +10,7 @@
     },
     {
       "label": "About",
+      "page": "src/content/page/about.mdx",
       "children": [
         {
           "label": "About me",
@@ -19,8 +20,7 @@
           "label": "Contact",
           "page": "src/content/page/contact.mdx"
         }
-      ],
-      "page": "src/content/page/about.mdx"
+      ]
     },
     {
       "label": "Contact",
@@ -31,7 +31,7 @@
     "email": "hello@amrcounselling.ca",
     "phone": "",
     "location": "Placeholder location",
-    "acknowledgement": "Placeholder land acknowledgement — Ashley's words go here.\n",
+    "acknowledgement": "I am privileged to live and work on the traditional lands of the W̱SÁNEĆ and Lək̓ʷəŋən (Songhees and Xwsepsum/Esquimalt) people. \n",
     "crisisNote": "If you are in crisis, call or text 9-8-8, or call 9-1-1.",
     "badges": []
   }
